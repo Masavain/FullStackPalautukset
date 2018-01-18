@@ -21,7 +21,7 @@ const App = () => {
     <div>
       <Otsikko kurssi={kurssi} />
       <Sisalto osa1={osa1.nimi} t1={osa1.tehtavia} osa2={osa2.nimi}
-        t2={tehtavia} osa3={osa3.nimi} t3={tehtavia} />
+        t2={osa2.tehtavia} osa3={osa3.nimi} t3={osa3.tehtavia} />
       <Yhteensa t1={osa1.tehtavia} t2={osa2.tehtavia} t3={osa3.tehtavia} />
     </div>
   )
