@@ -8,7 +8,7 @@ class App extends React.Component {
             hyva: 0,
             neutraali: 0,
             huono: 0,
-            kaikkia: 0
+            kaikkia: 0,
         }
     }
 
@@ -37,50 +37,61 @@ class App extends React.Component {
 
 
 
+
     render() {
-        const keskiarvo = () => {
-            if (this.state.kaikkia === 0) {
+        const Button = ({ onClick, text }) => (
+            <button onClick={onClick}>
+                {text}
+            </button>
+        )
+        const Statistics = () => {
+            if (this.state.kaikkia === 0)
                 return (
                     <div>
-                        keskiarvo 0
+                        <h2>statistiikka</h2>
+                        <p>ei yhtään palautetta annettu</p>
                     </div>
                 )
-            }
             return (
                 <div>
-                    keskiarvo {Math.round(((this.state.hyva - this.state.huono) / this.state.kaikkia) * 100) / 100}
+                    <h2>statistiikka</h2>
+                    <Statistic statistiikka={this.state.hyva} text="hyvä" />
+                    <Statistic statistiikka={this.state.neutraali} text="neutraali" />
+                    <Statistic statistiikka={this.state.huono} text="huono" />
+                    <Statistic statistiikka={keskiarvo()} text="keskiarvo" />
+                    <Statistic statistiikka={positiivisia()} text="positiivisia" />
                 </div>
             )
         }
 
-        const positiivisia = () => {
+        const Statistic = ({ statistiikka, text }) => {
+            if (text === "positiivisia")
+                return (
+                    <div>
+                        {text} {statistiikka} %
+                </div>
+                )
             return (
                 <div>
-                    positiivisia {Math.round(((this.state.hyva) / this.state.kaikkia) * 100) * 100 / 100} %
-            </div>
+                    {text} {statistiikka}
+                </div>
             )
         }
+
+        const keskiarvo = () => Math.round(((this.state.hyva - this.state.huono) / this.state.kaikkia) * 100) / 100
+        const positiivisia = () => Math.round(((this.state.hyva) / this.state.kaikkia) * 100) * 100 / 100
+
 
         return (
             <div>
                 <div>
                     <h2>anna palautetta</h2>
                 </div>
-                <div>
-                    <button onClick={this.klikHyva}>hyvä</button>
-                    <button onClick={this.klikNeut}>neutraali</button>
-                    <button onClick={this.klikHuono}>huono</button>
-                </div>
-                <div>
-                    <h2>statistiikka</h2>
-                </div>
-                <div>
-                    <div>hyvä {this.state.hyva}</div>
-                    <div>neutraali {this.state.neutraali}</div>
-                    <div>huono {this.state.huono}</div>
-                    {keskiarvo()}
-                    {positiivisia()}
-                </div>
+                <Button onClick={this.klikHyva} text="hyvä" />
+                <Button onClick={this.klikNeut} text="neutraali" />
+                <Button onClick={this.klikHuono} text="huono" />
+                <Statistics />
+
             </div>
 
         )
