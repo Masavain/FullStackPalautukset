@@ -40,11 +40,15 @@ class App extends React.Component {
             return (
                 <div>
                     <h2>statistiikka</h2>
-                    <Statistic statistiikka={this.state.hyva} text="hyvä" />
-                    <Statistic statistiikka={this.state.neutraali} text="neutraali" />
-                    <Statistic statistiikka={this.state.huono} text="huono" />
-                    <Statistic statistiikka={keskiarvo()} text="keskiarvo" />
-                    <Statistic statistiikka={positiivisia()} text="positiivisia" />
+                    <table>
+                        <tbody>
+                            <Statistic statistiikka={this.state.hyva} text="hyvä" />
+                            <Statistic statistiikka={this.state.neutraali} text="neutraali" />
+                            <Statistic statistiikka={this.state.huono} text="huono" />
+                            <Statistic statistiikka={keskiarvo()} text="keskiarvo" />
+                            <Statistic statistiikka={positiivisia()} text="positiivisia" />
+                        </tbody>
+                    </table>
                 </div>
             )
         }
@@ -52,14 +56,22 @@ class App extends React.Component {
         const Statistic = ({ statistiikka, text }) => {
             if (text === "positiivisia")
                 return (
-                    <div>
-                        {text} {statistiikka} %
-                </div>
+                    <tr>
+                        <td>
+                            {text}
+                        </td>
+                        <td>{statistiikka} %
+                    </td>
+                    </tr>
                 )
             return (
-                <div>
-                    {text} {statistiikka}
-                </div>
+                <tr>
+                    <td>
+                        {text}
+                    </td>
+                    <td>{statistiikka}
+                    </td>
+                </tr>
             )
         }
 
