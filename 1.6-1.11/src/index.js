@@ -12,31 +12,16 @@ class App extends React.Component {
         }
     }
 
-    klikHyva = () => {
-        this.setState({
-            hyva: this.state.hyva + 1,
-            kaikkia: this.state.kaikkia + 1
-        })
+
+    klikkaus = (arvo) => {
+        return () => {
+            this.setState({
+                [arvo]: this.state[arvo] + 1,
+                kaikkia: this.state.kaikkia + 1
+            })
+        }
+
     }
-
-    klikNeut = () => {
-        this.setState({
-            neutraali: this.state.neutraali + 1,
-            kaikkia: this.state.kaikkia + 1
-
-        })
-    }
-
-    klikHuono = () => {
-        this.setState({
-            huono: this.state.huono + 1,
-            kaikkia: this.state.kaikkia + 1
-
-        })
-    }
-
-
-
 
     render() {
         const Button = ({ onClick, text }) => (
@@ -87,9 +72,9 @@ class App extends React.Component {
                 <div>
                     <h2>anna palautetta</h2>
                 </div>
-                <Button onClick={this.klikHyva} text="hyvä" />
-                <Button onClick={this.klikNeut} text="neutraali" />
-                <Button onClick={this.klikHuono} text="huono" />
+                <Button onClick={this.klikkaus('hyva')} text="hyvä" />
+                <Button onClick={this.klikkaus('neutraali')} text="neutraali" />
+                <Button onClick={this.klikkaus('huono')} text="huono" />
                 <Statistics />
 
             </div>
