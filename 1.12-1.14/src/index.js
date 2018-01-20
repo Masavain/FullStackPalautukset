@@ -44,7 +44,9 @@ class App extends React.Component {
         const Anekdootti = ({ indeksi }) => {
             return (
                 <div>
-                    {this.props.anecdotes[indeksi]}
+                    <div>
+                        {this.props.anecdotes[indeksi]}
+                    </div>
                     <div>
                         has {this.state.votes[indeksi]} votes
                 </div>
