@@ -1,22 +1,30 @@
 import React from 'react';
 import Person from './components/Person'
+import axios from 'axios'
 
 class App extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            persons: props.persons,
+            persons: [],
             newName: '',
             newNum: '',
             naytettava: ''
         }
     }
+    componentWillMount() {
+        axios
+          .get('http://localhost:3001/persons')
+          .then(response => {
+            this.setState({ persons: response.data })
+          })
+      }
 
     addName = (event) => {
         event.preventDefault()
         const person = {
             name: this.state.newName,
-            num: this.state.newNum
+            number: this.state.newNum
         }
 
         const nimet = []
@@ -45,8 +53,6 @@ class App extends React.Component {
         var nimet = this.state.persons.filter(function(person) {
             return person.name.toLowerCase().indexOf(haettu.toLowerCase())>=0
         })
-        console.log(nimet)
-        console.log(haettu)
         return nimet
     }
 
@@ -57,7 +63,6 @@ class App extends React.Component {
         this.setState({ newNum: event.target.value })
     }
     handleNaytettaviaChange = (event) => {
-        console.log(this.state.naytettava)
         this.setState({ naytettava: event.target.value })
     }
 
