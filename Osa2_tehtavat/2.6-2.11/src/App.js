@@ -1,6 +1,7 @@
 import React from 'react';
 import Person from './components/Person'
-import axios from 'axios'
+import personService
+    from './services/persons'
 
 class App extends React.Component {
     constructor(props) {
@@ -13,12 +14,13 @@ class App extends React.Component {
         }
     }
     componentWillMount() {
-        axios
-          .get('http://localhost:3001/persons')
-          .then(response => {
-            this.setState({ persons: response.data })
-          })
-      }
+        personService
+
+            .getAll()
+            .then(persons => {
+                this.setState({ persons: persons })
+            })
+    }
 
     addName = (event) => {
         event.preventDefault()
@@ -29,31 +31,47 @@ class App extends React.Component {
 
         const nimet = []
         this.state.persons.map(person => nimet.push(person.name))
-
         if (nimet.includes(person.name)) {
-            alert("ei passaa")
-            this.setState({
-                newName: '',
-                newNum: ''
-            })
+            if (window.confirm(`${person.name} on jo luettelossa, korvataanko vanha numero uudella?`)) {
+                const original = this.state.persons.find(x => x.name === person.name)
+                const changed = { ...original, number: person.number }
+                console.log(original)
+                console.log(changed)
+                personService
+                    .update(original.id, changed)
+                    .then(response => {
+                        const persons = this.state.persons
+                        persons[persons.indexOf(original)] = changed
+                        this.setState((prevState) => ({
+                            persons: persons,
+                            newName: '',
+                            newNum: ''
+                        }))
+                    })
+            }
+
+
         } else {
-            const persons = this.state.persons.concat(person)
-            this.setState({
-                persons,
-                newName: '',
-                newNum: ''
-            })
+            personService
+                .create(person)
+                .then(person => {
+                    this.setState({
+                        persons: this.state.persons.concat(person),
+                        newName: '',
+                        newNum: '',
+                    })
+                })
+
         }
-
-
     }
 
     rajaaNimet = () => {
         const haettu = this.state.naytettava
-        var nimet = this.state.persons.filter(function(person) {
-            return person.name.toLowerCase().indexOf(haettu.toLowerCase())>=0
+        var nimet = this.state.persons.filter(function (person) {
+            return person.name.toLowerCase().indexOf(haettu.toLowerCase()) >= 0
         })
         return nimet
+
     }
 
     handleNameChange = (event) => {
@@ -66,16 +84,32 @@ class App extends React.Component {
         this.setState({ naytettava: event.target.value })
     }
 
+    deletePerson = (id) => {
+        return () => {
+            if (window.confirm(`poistetaanko ${this.state.persons.find(x => x.id === id).name}`))
+                personService
+                    .poista(id)
+                    .then(Response => {
+                        this.setState({
+                            persons: this.state.persons.filter(p => p.id !== id),
+
+                        })
+                    })
+                    .catch(error => {
+                        alert(`henkilö '${id}' on jo valitettavasti poistettu palvelimelta`)
+                        this.setState({ persons: this.state.persons.filter(p => p.id !== id) })
+                    })
+        }
+    }
 
     render() {
         const toShow = this.rajaaNimet()
-
         return (
             <div>
                 <h2>Puhelinluettelo</h2>
                 <form>
                     <div>
-                        rajaa näytettäviä: <input value={this.state.naytettava} onChange={this.handleNaytettaviaChange}/>
+                        rajaa näytettäviä: <input value={this.state.naytettava} onChange={this.handleNaytettaviaChange} />
                     </div>
                 </form>
 
@@ -94,7 +128,7 @@ class App extends React.Component {
 
                 <h3>Numerot</h3>
                 <ul>
-                    {toShow.map(person => <Person key={person.name} person={person} />)}
+                    {toShow.map(person => <Person key={person.id} person={person} deletePerson={this.deletePerson(person.id)} />)}
                 </ul>
             </div>
         )
