@@ -3,6 +3,17 @@ import Person from './components/Person'
 import personService
     from './services/persons'
 
+const Notification = ({ message }) => {
+    if (message === null) {
+        return null
+    }
+    return (
+        <div className="notif">
+            {message}
+        </div>
+    )
+}
+
 class App extends React.Component {
     constructor(props) {
         super(props)
@@ -10,7 +21,8 @@ class App extends React.Component {
             persons: [],
             newName: '',
             newNum: '',
-            naytettava: ''
+            naytettava: '',
+            notif: null
         }
     }
     componentWillMount() {
@@ -35,18 +47,29 @@ class App extends React.Component {
             if (window.confirm(`${person.name} on jo luettelossa, korvataanko vanha numero uudella?`)) {
                 const original = this.state.persons.find(x => x.name === person.name)
                 const changed = { ...original, number: person.number }
-                console.log(original)
-                console.log(changed)
                 personService
                     .update(original.id, changed)
                     .then(response => {
                         const persons = this.state.persons
                         persons[persons.indexOf(original)] = changed
-                        this.setState((prevState) => ({
+                        this.setState({
                             persons: persons,
                             newName: '',
-                            newNum: ''
-                        }))
+                            newNum: '',
+                            notif: `Henkilön ${person.name} numero päivitettiin`
+                        })
+                        setTimeout(() => {
+                            this.setState({ notif: null })
+                        }, 3000)
+                    })
+                    .catch(error => {
+                        this.setState({
+                            notif: `henkilö '${person.name}' on jo valitettavasti poistettu palvelimelta`,
+                            persons: this.state.persons.filter(p => p.id !== person.id)
+                        })
+                        setTimeout(() => {
+                            this.setState({ notif: null })
+                        }, 5000)
                     })
             }
 
@@ -59,9 +82,13 @@ class App extends React.Component {
                         persons: this.state.persons.concat(person),
                         newName: '',
                         newNum: '',
+                        notif: `lisättiin ${person.name}`,
+                        
                     })
+                    setTimeout(() => {
+                        this.setState({ notif: null })
+                    }, 3000)
                 })
-
         }
     }
 
@@ -86,18 +113,27 @@ class App extends React.Component {
 
     deletePerson = (id) => {
         return () => {
-            if (window.confirm(`poistetaanko ${this.state.persons.find(x => x.id === id).name}`))
+            const person = this.state.persons.find(x => x.id === id)
+            if (window.confirm(`poistetaanko ${person.name}`))
                 personService
                     .poista(id)
                     .then(Response => {
                         this.setState({
                             persons: this.state.persons.filter(p => p.id !== id),
-
+                            notif: `Henkilö ${person.name} poistettiin`
                         })
+                        setTimeout(() => {
+                            this.setState({ notif: null })
+                        }, 3000)
                     })
                     .catch(error => {
-                        alert(`henkilö '${id}' on jo valitettavasti poistettu palvelimelta`)
-                        this.setState({ persons: this.state.persons.filter(p => p.id !== id) })
+                        this.setState({
+                            notif: `henkilö '${person.name}' on jo valitettavasti poistettu palvelimelta`,
+                            persons: this.state.persons.filter(p => p.id !== id)
+                        })
+                        setTimeout(() => {
+                            this.setState({ notif: null })
+                        }, 5000)
                     })
         }
     }
@@ -107,6 +143,7 @@ class App extends React.Component {
         return (
             <div>
                 <h2>Puhelinluettelo</h2>
+                <Notification message={this.state.notif} />
                 <form>
                     <div>
                         rajaa näytettäviä: <input value={this.state.naytettava} onChange={this.handleNaytettaviaChange} />
