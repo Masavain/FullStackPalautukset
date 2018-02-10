@@ -1,0 +1,14 @@
+body {
+  margin: 2;
+  padding: 0;
+}
+.notif {
+  color: black;
+  background: rgb(0, 185, 0);
+  font-size: 18px;
+  border-style: solid;
+  border-radius: 1px;
+  padding: 10px;
+  margin-bottom: 10px;
+  width: 300px
+}

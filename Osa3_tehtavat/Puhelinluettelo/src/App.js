@@ -1,19 +1,9 @@
 import React from 'react';
 import Person from './components/Person'
+import Notification from './components/Notification'
 import personService
     from './services/persons'
 
-const Notification = ({ message }) => {
-    if (message === null) {
-        return null
-    }
-    return (
-        <div className="notif">
-            {message}
-        </div>
-    )
-    
-}
 
 
 class App extends React.Component {
